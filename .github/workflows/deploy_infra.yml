@@ -22,6 +22,6 @@ jobs:
 
     - name: Create S3
       run: |
-        aws s3api create-bucket --bucket test-bucket-tty5544 --region us-east-1
-        #aws s3 rb s3://test-bucket-tty5544 --region us-east-1 --force
+        #aws s3api create-bucket --bucket test-bucket-tty5544 --region us-east-1
+        aws s3 rb s3://test-bucket-tty5544 --region us-east-1 --force
 
