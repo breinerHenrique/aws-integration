@@ -1,0 +1,28 @@
+name: Deploy to AWS
+
+on:
+  push:
+    branches:
+      - custom
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Configure AWS credentials using OIDC
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        role-to-assume: arn:aws:iam::236730285067:role/role_GitHubActionsIntegration
+        aws-region: us-east-1  # Substitua pela sua região AWS
+
+    - name: Create S3
+      run: |
+        aws s3api create-bucket --bucket test-bucket-989282 --region us-east-1
