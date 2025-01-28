@@ -18,8 +18,8 @@ jobs:
       uses: aws-actions/configure-aws-credentials@v4
       with:
         aws-region: us-east-1
-        role-to-assume: arn:aws:iam::236730285067:role/IntegrationGitHubActions-Role-f9iNqEnziBvh
+        role-to-assume: arn:aws:iam::236730285067:role/role_GitHubActionsIntegration
 
     - name: Create S3
       run: |
-        aws s3api create-bucket --bucket test-bucket-tty5543 --region us-east-1
+        aws s3api create-bucket --bucket test-bucket-tty5544 --region us-east-1
