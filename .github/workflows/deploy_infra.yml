@@ -36,16 +36,17 @@ jobs:
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init Develop - ECR
       run: |
-        ls -la
         cd tf-aws-resources/develop/ecr
         terraform init
 
     # Checks that all Terraform configuration files adhere to a canonical format
     - name: Terraform Format Develop - ECR
       run: |
+        cd tf-aws-resources/develop/ecr
         terraform fmt -check
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan Develop - ECR
       run: |
+        cd tf-aws-resources/develop/ecr
         terraform plan
