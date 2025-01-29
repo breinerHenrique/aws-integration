@@ -80,7 +80,22 @@ jobs:
         shell: bash
     
     steps:
-    # Generates an execution plan for Terraform
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Configure AWS Credentials using OIDC
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: us-east-1
+        role-to-assume: arn:aws:iam::236730285067:role/role_GitHubActionsIntegration  
+
+    # Install the latest version of Terraform CLI
+    - name: Setup Terraform Develop
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: "1.1.7"
+    
+      # Generates an execution plan for Terraform
     - name: Terraform Apply Develop - ECR
       run: |
         cd tf-aws-resources/develop/ecr
