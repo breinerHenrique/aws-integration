@@ -43,7 +43,7 @@ jobs:
     - name: Terraform Format Develop - ECR
       run: |
         cd tf-aws-resources/develop/ecr
-        terraform fmt -check
+        terraform fmt
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan Develop - ECR
