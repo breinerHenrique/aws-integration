@@ -1,4 +1,4 @@
-name: Deploy to AWS
+name: Deploy INFRA to AWS
 
 on: workflow_dispatch
 
