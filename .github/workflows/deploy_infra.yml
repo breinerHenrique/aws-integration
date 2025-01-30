@@ -15,9 +15,9 @@ jobs:
       aws_resource: "ECR"
 
   manual-approval:
-    name: Manual Approval
+    name: Manual Approval to CREATE
     runs-on: ubuntu-latest
-    environment: Manual Approval
+    environment: Manual Approval CREATE
     needs: terraform-plan
           
     permissions:
@@ -25,7 +25,7 @@ jobs:
       
     steps:
     - name: Await Manual Approval
-      run: echo "Aguardando aprovação... "
+      run: echo "Waiting manual approve to CREATE the terraform resources..."
 
   terraform-apply:
     name: 'Terraform-Apply'
@@ -38,9 +38,9 @@ jobs:
       terraform_action: "apply"
 
   manual-approval-destroy:
-    name: Manual Approval Destroy
+    name: Manual Approval to DESTROY
     runs-on: ubuntu-latest
-    environment: Manual Approval
+    environment: Manual Approval DESTROY
     needs: terraform-apply
           
     permissions:
@@ -48,7 +48,7 @@ jobs:
       
     steps:
     - name: Await Manual Approval to Destroy
-      run: echo "Aguardando aprovação... "
+      run: echo "Waiting manual approve to DESTROY the terraform resources..."
 
   terraform-destroy:
     name: 'Terraform-Destroy'

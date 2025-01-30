@@ -16,7 +16,7 @@ on:
             required: true
 
 jobs:
-  setup-terraform:
+  setup_and_plan:
     runs-on: ubuntu-latest
     permissions:
       id-token: write # This is required for requesting the JWT

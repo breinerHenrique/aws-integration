@@ -21,7 +21,7 @@ on:
 
 
 jobs:
-  setup-terraform:
+  setup_and_apply_or_destroy:
     runs-on: ubuntu-latest
     permissions:
       id-token: write # This is required for requesting the JWT
@@ -61,7 +61,7 @@ jobs:
         terraform apply --auto-approve
 
     # Generates an execution destroy for Terraform
-    - name: Terraform Apply ${{ inputs.environment }} - ${{ inputs.aws_resource }}
+    - name: Terraform Destroy ${{ inputs.environment }} - ${{ inputs.aws_resource }}
       if: ${{ inputs.terraform_action == 'destroy' }}
       run: |
         cd ${{ inputs.terraform_path }}
