@@ -1,4 +1,4 @@
-resource "aws_ecr_repository" "ecr-repository" {
+resource "aws_ecr_repository" "this" {
   name                 = "ecr-test1"
   image_tag_mutability = "MUTABLE"
 
