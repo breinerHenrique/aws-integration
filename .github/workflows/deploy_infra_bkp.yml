@@ -1,0 +1,164 @@
+name: Deploy INFRA on AWS (BKP)
+
+on: workflow_dispatch
+# on:
+#   push:
+#     branches:
+#       - 'infra-terraform'
+
+jobs:
+  terraform-plan:
+    name: 'Terraform-Plan'
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write # This is required for requesting the JWT
+      contents: read  # This is required for actions/checkout
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    # Checkout the repository to the GitHub Actions runner
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Configure AWS Credentials using OIDC
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: us-east-1
+        role-to-assume: arn:aws:iam::236730285067:role/role_GitHubActionsIntegration  
+
+    # Install the latest version of Terraform CLI
+    - name: Setup Terraform Develop
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: "1.1.7"
+
+    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+    - name: Terraform Init Develop - ECR
+      run: |
+        cd tf-aws-resources/develop/ecr
+        terraform init
+
+    # Checks that all Terraform configuration files adhere to a canonical format
+    - name: Terraform Format Develop - ECR
+      run: |
+        cd tf-aws-resources/develop/ecr
+        terraform fmt
+
+    # Generates an execution plan for Terraform
+    - name: Terraform Plan Develop - ECR
+      run: |
+        cd tf-aws-resources/develop/ecr
+        terraform plan
+
+  manual-approval:
+    name: Manual Approval
+    runs-on: ubuntu-latest
+    environment: Manual Approval
+    needs: terraform-plan
+          
+    permissions:
+      issues: write
+      
+    steps:
+    - name: Await Manual Approval
+      run: echo "Aguardando aprovação... "
+
+  terraform-apply:
+    name: 'Terraform-Apply'
+    runs-on: ubuntu-latest
+    needs: manual-approval
+
+    permissions:
+      id-token: write # This is required for requesting the JWT
+      contents: read  # This is required for actions/checkout
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Configure AWS Credentials using OIDC
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: us-east-1
+        role-to-assume: arn:aws:iam::236730285067:role/role_GitHubActionsIntegration  
+
+    # Install the latest version of Terraform CLI
+    - name: Setup Terraform Develop
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: "1.1.7"
+
+    - name: Terraform Init Develop - ECR
+      run: |
+        cd tf-aws-resources/develop/ecr
+        terraform init        
+
+      # Generates an execution plan for Terraform
+    - name: Terraform Apply Develop - ECR
+      run: |
+        cd tf-aws-resources/develop/ecr
+        terraform apply --auto-approve
+
+  manual-approval-destroy:
+    name: Manual Approval Destroy
+    runs-on: ubuntu-latest
+    environment: Manual Approval
+    needs: terraform-apply
+          
+    permissions:
+      issues: write
+      
+    steps:
+    - name: Await Manual Approval to Destroy
+      run: echo "Aguardando aprovação... "
+
+  terraform-destroy:
+    name: 'Terraform-Destroy'
+    runs-on: ubuntu-latest
+    needs: manual-approval-destroy
+
+    permissions:
+      id-token: write # This is required for requesting the JWT
+      contents: read  # This is required for actions/checkout
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Configure AWS Credentials using OIDC
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: us-east-1
+        role-to-assume: arn:aws:iam::236730285067:role/role_GitHubActionsIntegration  
+
+    # Install the latest version of Terraform CLI
+    - name: Setup Terraform Develop
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: "1.1.7"
+
+    - name: Terraform Init Develop - ECR
+      run: |
+        cd tf-aws-resources/develop/ecr
+        terraform init        
+
+      # Generates an execution plan for Terraform
+    - name: Terraform Destroy Develop - ECR
+      run: |
+        cd tf-aws-resources/develop/ecr
+        terraform destroy --auto-approve     

@@ -1,0 +1,61 @@
+name: Terrafom Plan - common steps
+on: 
+  workflow_call:
+      inputs:
+        terraform_path:
+          description: 'Path with terraform code'
+          type: string
+          required: true
+        environment:
+            description: 'Environment'
+            type: string
+            required: true
+        aws_resource:
+            description: 'AWS resource to create'
+            type: string
+            required: true
+
+jobs:
+  setup-terraform:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write # This is required for requesting the JWT
+      contents: read  # This is required for actions/checkout  
+    defaults: # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+      run:
+        shell: bash
+
+    steps:
+    # Checkout the repository to the GitHub Actions runner
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Configure AWS Credentials using OIDC
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: us-east-1
+        role-to-assume: arn:aws:iam::236730285067:role/role_GitHubActionsIntegration  
+
+    # Install the latest version of Terraform CLI
+    - name: Setup Terraform ${{ inputs.environment }}
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: "1.1.7"
+
+    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+    - name: Terraform Init ${{ inputs.environment }} - ${{ inputs.aws_resource }}
+      run: |
+        cd ${{ inputs.terraform_path }}
+        terraform init
+
+    # Checks that all Terraform configuration files adhere to a canonical format
+    - name: Terraform Format ${{ inputs.environment }} - ${{ inputs.aws_resource }}
+      run: |
+        cd ${{ inputs.terraform_path }}
+        terraform fmt
+
+    # Generates an execution plan for Terraform
+    - name: Terraform Plan ${{ inputs.environment }} - ${{ inputs.aws_resource }}
+      run: |
+        cd ${{ inputs.terraform_path }}
+        terraform plan      
