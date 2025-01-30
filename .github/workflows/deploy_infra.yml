@@ -9,12 +9,13 @@ jobs:
   terraform-plan:
     name: 'Terraform-Plan'
     uses: ./.github/workflows/terraform_reusable_plan.yml
-    with:
-      environment: "Develop"
-      aws_resource: "ECR"
     strategy:
       matrix:
-        terraform_path: [tf-aws-resources/develop/ecr, tf-aws-resources/develop/s3]
+        paths: [tf-aws-resources/develop/ecr, tf-aws-resources/develop/s3]
+    with:
+      terraform_path: ${{ matrix.paths }}
+      environment: "Develop"
+      aws_resource: "ECR"
 
   manual-approval:
     name: Manual Approval to CREATE
@@ -33,14 +34,15 @@ jobs:
     name: 'Terraform-Apply'
     needs: manual-approval
     uses: ./.github/workflows/terraform_reusable_action.yml
+    strategy:
+      matrix:
+        paths: [tf-aws-resources/develop/ecr, tf-aws-resources/develop/s3]
     with:
-      #terraform_path: "tf-aws-resources/develop/ecr"
+      terraform_path: ${{ matrix.paths }}
       environment: "Develop"
       aws_resource: "ECR"
       terraform_action: "apply"
-    strategy:
-      matrix:
-        terraform_path: [tf-aws-resources/develop/ecr, tf-aws-resources/develop/s3]
+
 
   manual-approval-destroy:
     name: Manual Approval to DESTROY
