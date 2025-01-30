@@ -48,12 +48,6 @@ jobs:
         cd ${{ inputs.terraform_path }}
         terraform init
 
-    # Checks that all Terraform configuration files adhere to a canonical format
-    - name: Terraform Format ${{ inputs.environment }} - ${{ inputs.aws_resource }}
-      run: |
-        cd ${{ inputs.terraform_path }}
-        terraform fmt
-
     # Generates an execution plan for Terraform
     - name: Terraform Plan ${{ inputs.environment }} - ${{ inputs.aws_resource }}
       run: |
