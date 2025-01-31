@@ -16,7 +16,7 @@ on:
             required: true
 
 jobs:
-  setup_and_show_destroy:
+  setup_and_validate_destroy:
     runs-on: ubuntu-latest
     environment: Manual Approval DESTROY
     permissions:
@@ -49,8 +49,8 @@ jobs:
         cd ${{ inputs.terraform_path }}
         terraform init
 
-    # Generates an execution destroy for Terraform
+    # Generates a plan to show all the resource that will be destroyed for Terraform
     - name: Terraform Destroy ${{ inputs.environment }} - ${{ inputs.aws_resource }}
       run: |
         cd ${{ inputs.terraform_path }}
-        terraform destroy  
+        terraform plan -destroy  
