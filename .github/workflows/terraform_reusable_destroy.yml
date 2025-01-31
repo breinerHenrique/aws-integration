@@ -17,6 +17,7 @@ on:
 
 jobs:
   terraform_destroy:
+    name: Terraform DESTROY-${{ inputs.aws_resource }}
     runs-on: ubuntu-latest
     environment: Manual Approval DESTROY
     permissions:
@@ -38,19 +39,19 @@ jobs:
         role-to-assume: arn:aws:iam::236730285067:role/role_GitHubActionsIntegration  
 
     # Install the latest version of Terraform CLI
-    - name: Setup Terraform ${{ inputs.environment }}
+    - name: Setup Terraform-${{ inputs.aws_resource }}
       uses: hashicorp/setup-terraform@v3
       with:
         terraform_version: "1.1.7"
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
-    - name: Terraform Init ${{ inputs.environment }} - ${{ inputs.aws_resource }}
+    - name: Terraform Init-${{ inputs.aws_resource }}
       run: |
         cd ${{ inputs.terraform_path }}
         terraform init
 
     # Generates an execution destroy for Terraform
-    - name: Terraform Destroy ${{ inputs.environment }} - ${{ inputs.aws_resource }}
+    - name: Terraform Destroy-${{ inputs.aws_resource }}
       run: |
         cd ${{ inputs.terraform_path }}
         terraform destroy --auto-approve
