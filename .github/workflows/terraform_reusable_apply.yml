@@ -2,10 +2,6 @@ name: Terrafom Plan - common steps
 on: 
   workflow_call:
       inputs:
-        # terraform_path:
-        #   description: 'Path with terraform code'
-        #   type: string
-        #   required: true
         resource_path:
           description: 'Path with terraform code from AWS resource'
           type: string
@@ -14,10 +10,6 @@ on:
           description: 'Environment'
           type: string
           required: true
-        # aws_resource:
-        #     description: 'AWS resource to create'
-        #     type: string
-        #     required: true
 
 jobs:
   terraform_apply:

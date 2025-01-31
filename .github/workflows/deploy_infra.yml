@@ -12,9 +12,7 @@ jobs:
       matrix:
         paths: [ecr, s3]
     with:
-      # terraform_path: ${{ matrix.paths }}
       environment: "Develop"
-      # aws_resource: ${{ matrix.paths }}
       resource_path: ${{ matrix.paths }}
 
   manual-approval:
@@ -35,22 +33,17 @@ jobs:
       matrix:
         paths: [ecr, s3]
     with:
-      # terraform_path: ${{ matrix.paths }}
       environment: "Develop"
-      # aws_resource: ${{ matrix.paths }}
       resource_path: ${{ matrix.paths }}
 
   manual-approval-validate-destroy:
-    # name: Manual Approval to show resources to DESTROY
     uses: ./.github/workflows/terraform_reusable_validate_destroy.yml
     needs: terraform-apply 
     strategy:
       matrix:
         paths: [ecr, s3]
     with:
-      # terraform_path: ${{ matrix.paths }}
       environment: "Develop"
-      # aws_resource: ${{ matrix.paths }}
       resource_path: ${{ matrix.paths }}
       
   manual-approval-destroy:
@@ -61,7 +54,5 @@ jobs:
       matrix:
         paths: [ecr, s3]
     with:
-      # terraform_path: ${{ matrix.paths }}
       environment: "Develop"
-      # aws_resource: ${{ matrix.paths }}
       resource_path: ${{ matrix.paths }}
