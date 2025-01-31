@@ -21,8 +21,7 @@ jobs:
     name: Manual Approval to CREATE
     runs-on: ubuntu-latest
     environment: Manual Approval CREATE
-    needs: terraform-plan
-          
+    needs: terraform-plan         
     permissions:
       issues: write
       
@@ -43,43 +42,49 @@ jobs:
       aws_resource: "ECR"
       terraform_action: "apply"
 
-
   manual-approval-destroy:
     name: Manual Approval to DESTROY
-    runs-on: ubuntu-latest
-    environment: Manual Approval DESTROY
-    needs: terraform-apply
-          
-    permissions:
-      issues: write
+    #runs-on: ubuntu-latest
+    uses: ./.github/workflows/terraform_reusable_validate_destroy.yml
+    #environment: Manual Approval DESTROY
+    strategy:
+      matrix:
+        paths: [tf-aws-resources/develop/ecr, tf-aws-resources/develop/s3]
+    with:
+      terraform_path: ${{ matrix.paths }}
+      environment: "Develop"
+      aws_resource: "ECR"
+    #needs: terraform-apply    
+    # permissions:
+    #   issues: write
       
-    steps:
-    - name: Configure AWS Credentials using OIDC
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-        aws-region: us-east-1
-        role-to-assume: arn:aws:iam::236730285067:role/role_GitHubActionsIntegration  
+    # steps:
+    # - name: Configure AWS Credentials using OIDC
+    #   uses: aws-actions/configure-aws-credentials@v4
+    #   with:
+    #     aws-region: us-east-1
+    #     role-to-assume: arn:aws:iam::236730285067:role/role_GitHubActionsIntegration  
 
-    # Install the latest version of Terraform CLI
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v3
-      with:
-        terraform_version: "1.1.7"
+    # # Install the latest version of Terraform CLI
+    # - name: Setup Terraform
+    #   uses: hashicorp/setup-terraform@v3
+    #   with:
+    #     terraform_version: "1.1.7"
 
-    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
-    - name: Terraform Init
-      run: |
-        cd tf-aws-resources/develop/ecr
-        terraform init
+    # # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+    # - name: Terraform Init
+    #   run: |
+    #     cd tf-aws-resources/develop/ecr
+    #     terraform init
 
-    # Generates an execution to show the resources to destroy for Terraform
-    - name: Terraform Plan Destoy
-      run: |
-        cd tf-aws-resources/develop/ecr
-        terraform destroy
+    # # Generates an execution to show the resources to destroy for Terraform
+    # - name: Terraform Plan Destoy
+    #   run: |
+    #     cd tf-aws-resources/develop/ecr
+    #     terraform destroy
 
-    - name: Await Manual Approval to Destroy
-      run: echo "Waiting manual approve to DESTROY the terraform resources..."
+    # - name: Await Manual Approval to Destroy
+    #   run: echo "Waiting manual approve to DESTROY the terraform resources..."
       
   terraform-destroy:
     name: 'Terraform-Destroy'
