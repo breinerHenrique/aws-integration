@@ -41,7 +41,7 @@ jobs:
       aws_resource: ${{ matrix.paths }}
 
   manual-approval-validate-destroy:
-    name: Manual Approval to show resources to DESTROY
+    # name: Manual Approval to show resources to DESTROY
     uses: ./.github/workflows/terraform_reusable_validate_destroy.yml
     needs: terraform-apply 
     strategy:

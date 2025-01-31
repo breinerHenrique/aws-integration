@@ -17,7 +17,7 @@ on:
 
 jobs:
   terraform_plan:
-    name: Terraform Plan-${{ inputs.aws_resource }}
+    name: Terraform Plan  - ${{ inputs.aws_resource }}
     runs-on: ubuntu-latest
     permissions:
       id-token: write # This is required for requesting the JWT
@@ -39,19 +39,19 @@ jobs:
         role-to-assume: arn:aws:iam::236730285067:role/role_GitHubActionsIntegration  
 
     # Install the latest version of Terraform CLI
-    - name: Setup Terraform-${{ inputs.aws_resource }}
+    - name: Setup Terraform
       uses: hashicorp/setup-terraform@v3
       with:
         terraform_version: "1.1.7"
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
-    - name: Terraform Init-${{ inputs.aws_resource }}
+    - name: Terraform Init - ${{ inputs.aws_resource}}
       run: |
         cd ${{ inputs.terraform_path }}
         terraform init
 
     # Generates an execution plan for Terraform
-    - name: Terraform Plan-${{ inputs.aws_resource }}
+    - name: Terraform Plan - ${{ inputs.aws_resource }}
       run: |
         cd ${{ inputs.terraform_path }}
         terraform plan      
