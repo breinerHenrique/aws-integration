@@ -32,7 +32,7 @@ jobs:
   terraform-apply:
     name: 'Terraform-Apply'
     needs: manual-approval
-    uses: ./.github/workflows/terraform_reusable_action.yml
+    uses: ./.github/workflows/terraform_reusable_apply.yml
     strategy:
       matrix:
         paths: [tf-aws-resources/develop/ecr, tf-aws-resources/develop/s3]
@@ -40,10 +40,10 @@ jobs:
       terraform_path: ${{ matrix.paths }}
       environment: "Develop"
       aws_resource: "ECR"
-      terraform_action: "apply"
+      # terraform_action: "apply"
 
-  manual-approval-destroy:
-    name: Manual Approval to DESTROY
+  manual-approval-validate-destroy:
+    name: Manual Approval to show resources to DESTROY
     #runs-on: ubuntu-latest
     uses: ./.github/workflows/terraform_reusable_validate_destroy.yml
     #environment: Manual Approval DESTROY
@@ -86,12 +86,26 @@ jobs:
     # - name: Await Manual Approval to Destroy
     #   run: echo "Waiting manual approve to DESTROY the terraform resources..."
       
-  terraform-destroy:
-    name: 'Terraform-Destroy'
-    needs: manual-approval-destroy
-    uses: ./.github/workflows/terraform_reusable_action.yml
+  manual-approval-destroy:
+    name: Manual Approval to REALLY DESTROY
+    #runs-on: ubuntu-latest
+    uses: ./.github/workflows/terraform_reusable_destroy.yml
+    #environment: Manual Approval DESTROY
+    needs: manual-approval-validate-destroy 
+    strategy:
+      matrix:
+        paths: [tf-aws-resources/develop/ecr, tf-aws-resources/develop/s3]
     with:
-      terraform_path: "tf-aws-resources/develop/ecr"
+      terraform_path: ${{ matrix.paths }}
       environment: "Develop"
       aws_resource: "ECR"
-      terraform_action: "destroy"
+
+  # terraform-destroy:
+  #   name: 'Terraform-Destroy'
+  #   needs: manual-approval-destroy
+  #   uses: ./.github/workflows/terraform_reusable_destroy.yml
+  #   with:
+  #     terraform_path: "tf-aws-resources/develop/ecr"
+  #     environment: "Develop"
+  #     aws_resource: "ECR"
+  #     terraform_action: "destroy"

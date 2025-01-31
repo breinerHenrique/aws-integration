@@ -30,7 +30,7 @@ jobs:
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout repository
       uses: actions/checkout@v4      
-      
+
     - name: Configure AWS Credentials using OIDC
       uses: aws-actions/configure-aws-credentials@v4
       with:
@@ -53,7 +53,4 @@ jobs:
     - name: Terraform Destroy ${{ inputs.environment }} - ${{ inputs.aws_resource }}
       run: |
         cd ${{ inputs.terraform_path }}
-        terraform destroy
-
-    - name: Await Manual Approval to Destroy
-      run: echo "Waiting manual approve to DESTROY the terraform resources..."    
+        terraform destroy  

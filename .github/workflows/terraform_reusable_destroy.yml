@@ -14,10 +14,16 @@ on:
             description: 'AWS resource to create'
             type: string
             required: true
+        # terraform_action:
+        #     description: 'Terraform Action (apply or destroy)'
+        #     type: string
+        #     required: true
+
 
 jobs:
-  terraform_plan:
+  terraform_destroy:
     runs-on: ubuntu-latest
+    environment: Manual Approval DESTROY
     permissions:
       id-token: write # This is required for requesting the JWT
       contents: read  # This is required for actions/checkout  
@@ -48,8 +54,15 @@ jobs:
         cd ${{ inputs.terraform_path }}
         terraform init
 
-    # Generates an execution plan for Terraform
-    - name: Terraform Plan ${{ inputs.environment }} - ${{ inputs.aws_resource }}
+    # Generates an execution destroy for Terraform
+    - name: Terraform Destroy ${{ inputs.environment }} - ${{ inputs.aws_resource }}
       run: |
         cd ${{ inputs.terraform_path }}
-        terraform plan      
+        terraform destroy --auto-approve
+
+    # # Generates an execution destroy for Terraform
+    # - name: Terraform Destroy ${{ inputs.environment }} - ${{ inputs.aws_resource }}
+    #   if: ${{ inputs.terraform_action == 'destroy' }}
+    #   run: |
+    #     cd ${{ inputs.terraform_path }}
+    #     terraform destroy --auto-approve
