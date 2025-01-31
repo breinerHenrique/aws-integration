@@ -11,7 +11,7 @@ jobs:
     strategy:
       matrix:
         #paths: [tf-aws-resources/develop/ecr, tf-aws-resources/develop/s3]
-        paths: [ECR, S3]
+        paths: [ecr, s3]
     with:
       terraform_path: ${{ matrix.paths }}
       environment: "Develop"
@@ -34,7 +34,7 @@ jobs:
     strategy:
       matrix:
         #paths: [tf-aws-resources/develop/ecr, tf-aws-resources/develop/s3]
-        paths: [ECR, S3]
+        paths: [ecr, s3]
     with:
       terraform_path: ${{ matrix.paths }}
       environment: "Develop"
@@ -47,7 +47,7 @@ jobs:
     strategy:
       matrix:
         #paths: [tf-aws-resources/develop/ecr, tf-aws-resources/develop/s3]
-        paths: [ECR, S3]
+        paths: [ecr, s3]
     with:
       terraform_path: ${{ matrix.paths }}
       environment: "Develop"
@@ -60,7 +60,7 @@ jobs:
     strategy:
       matrix:
         #paths: [tf-aws-resources/develop/ecr, tf-aws-resources/develop/s3]
-        paths: [ECR, S3]
+        paths: [ecr, s3]
     with:
       terraform_path: ${{ matrix.paths }}
       environment: "Develop"
