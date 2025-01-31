@@ -16,7 +16,7 @@ on:
             required: true
 
 jobs:
-  setup_and_validate_destroy:
+  terraform_validate_destroy:
     runs-on: ubuntu-latest
     environment: Manual Approval DESTROY
     permissions:

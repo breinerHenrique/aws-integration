@@ -14,11 +14,6 @@ on:
             description: 'AWS resource to create'
             type: string
             required: true
-        # terraform_action:
-        #     description: 'Terraform Action (apply or destroy)'
-        #     type: string
-        #     required: true
-
 
 jobs:
   terraform_destroy:
@@ -59,10 +54,3 @@ jobs:
       run: |
         cd ${{ inputs.terraform_path }}
         terraform destroy --auto-approve
-
-    # # Generates an execution destroy for Terraform
-    # - name: Terraform Destroy ${{ inputs.environment }} - ${{ inputs.aws_resource }}
-    #   if: ${{ inputs.terraform_action == 'destroy' }}
-    #   run: |
-    #     cd ${{ inputs.terraform_path }}
-    #     terraform destroy --auto-approve
