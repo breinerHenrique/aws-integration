@@ -2,22 +2,26 @@ name: Terrafom Plan - common steps
 on: 
   workflow_call:
       inputs:
-        terraform_path:
-          description: 'Path with terraform code'
+        # terraform_path:
+        #   description: 'Path with terraform code'
+        #   type: string
+        #   required: true
+        resource_path:
+          description: 'Path with terraform code from AWS resource'
           type: string
           required: true
         environment:
-            description: 'Environment'
-            type: string
-            required: true
-        aws_resource:
-            description: 'AWS resource to create'
-            type: string
-            required: true
+          description: 'Environment'
+          type: string
+          required: true
+        # aws_resource:
+        #     description: 'AWS resource to create'
+        #     type: string
+        #     required: true
 
 jobs:
   terraform_plan:
-    name: Terraform Plan  - ${{ inputs.aws_resource }}
+    name: Terraform Plan  - ${{ inputs.resource_path }}
     runs-on: ubuntu-latest
     permissions:
       id-token: write # This is required for requesting the JWT
@@ -45,13 +49,13 @@ jobs:
         terraform_version: "1.1.7"
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
-    - name: Terraform Init - ${{ inputs.aws_resource}}
+    - name: Terraform Init - ${{ inputs.resource_path}}
       run: |
-        cd ${{ inputs.terraform_path }}
+        cd ${{ inputs.resource_path }}
         terraform init
 
     # Generates an execution plan for Terraform
-    - name: Terraform Plan - ${{ inputs.aws_resource }}
+    - name: Terraform Plan - ${{ inputs.resource_path }}
       run: |
-        cd ${{ inputs.terraform_path }}
+        cd ${{ inputs.resource_path }}
         terraform plan      

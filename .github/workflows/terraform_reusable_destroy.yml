@@ -2,22 +2,26 @@ name: Terrafom Plan - common steps
 on: 
   workflow_call:
       inputs:
-        terraform_path:
-          description: 'Path with terraform code'
+        # terraform_path:
+        #   description: 'Path with terraform code'
+        #   type: string
+        #   required: true
+        environment:
+          description: 'Environment'
           type: string
           required: true
-        environment:
-            description: 'Environment'
-            type: string
-            required: true
-        aws_resource:
-            description: 'AWS resource to create'
-            type: string
-            required: true
+        resource_path:
+          description: 'Path with terraform code from AWS resource'
+          type: string
+          required: true
+        # aws_resource:
+        #     description: 'AWS resource to create'
+        #     type: string
+        #     required: true
 
 jobs:
   terraform_destroy:
-    name: Terraform DESTROY - ${{ inputs.aws_resource }}
+    name: Terraform DESTROY - ${{ inputs.resource_path }}
     runs-on: ubuntu-latest
     environment: Manual Approval DESTROY
     permissions:
@@ -48,11 +52,11 @@ jobs:
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
       run: |
-        cd ${{ inputs.terraform_path }}
+        cd ${{ inputs.resource_path }}
         terraform init
 
     # Generates an execution destroy for Terraform
-    - name: Terraform Destroy - ${{ inputs.aws_resource }}
+    - name: Terraform Destroy - ${{ inputs.resource_path }}
       run: |
-        cd ${{ inputs.terraform_path }}
+        cd ${{ inputs.resource_path }}
         terraform destroy --auto-approve
