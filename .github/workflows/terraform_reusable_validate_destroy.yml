@@ -11,7 +11,7 @@ on:
             type: string
             required: true
         aws_resource:
-            description: 'AWS resource to create'
+            description: 'AWS resource to destroy'
             type: string
             required: true
 
@@ -27,6 +27,10 @@ jobs:
         shell: bash
 
     steps:
+    # Checkout the repository to the GitHub Actions runner
+    - name: Checkout repository
+      uses: actions/checkout@v4      
+      
     - name: Configure AWS Credentials using OIDC
       uses: aws-actions/configure-aws-credentials@v4
       with:
