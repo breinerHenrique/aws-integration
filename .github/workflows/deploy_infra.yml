@@ -47,6 +47,7 @@ jobs:
     #runs-on: ubuntu-latest
     uses: ./.github/workflows/terraform_reusable_validate_destroy.yml
     #environment: Manual Approval DESTROY
+    needs: terraform-apply 
     strategy:
       matrix:
         paths: [tf-aws-resources/develop/ecr, tf-aws-resources/develop/s3]
@@ -54,7 +55,6 @@ jobs:
       terraform_path: ${{ matrix.paths }}
       environment: "Develop"
       aws_resource: "ECR"
-    #needs: terraform-apply    
     # permissions:
     #   issues: write
       
