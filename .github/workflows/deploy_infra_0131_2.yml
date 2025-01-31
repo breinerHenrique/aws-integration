@@ -1,9 +1,9 @@
 name: Deploy INFRA on AWS
-#on: workflow_dispatch
-on:
-  push:
-    branches:
-      - 'infra-terraform'
+on: workflow_dispatch
+# on:
+#   push:
+#     branches:
+#       - 'infra-terraform'
 
 jobs:
   terraform-plan:
