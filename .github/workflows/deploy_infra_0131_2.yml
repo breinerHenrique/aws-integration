@@ -10,7 +10,7 @@ jobs:
     uses: ./.github/workflows/terraform_reusable_plan.yml
     strategy:
       matrix:
-        paths: ${{ vars.TERRAFORM_PATH }}
+        paths: [ecr, s3]
     with:
       environment: "Develop"
       resource_path: ${{ matrix.paths }}
