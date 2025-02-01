@@ -13,7 +13,7 @@ jobs:
     steps:
       - name: Definir matriz de paths
         id: set-matrix
-        run: echo "::set-output name=matrix::[\"ecr\", \"s3\"]"
+        run: echo "::set-output name=matrix::[ecr, s3]"
 
   terraform-plan:
     needs: setup-matrix
