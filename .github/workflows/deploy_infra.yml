@@ -12,13 +12,13 @@ jobs:
     outputs:
       paths: ${{ steps.set-paths.outputs.paths }}
     steps:
-      - name: Definir matriz de paths
+      - name: Set the paths from AWS services
         id: set-paths
 
         # PARA CRIAR NOVOS RECURSOS VIA TERRAFORM, NECESSARIO ALTERAR APENAS ESSA CONFIGURACAO, INSERINDO O NOME DAS PASTA COM OS ARQUIVOS DO TERRAFORM DE CADA RECURSO AWS.
         # SE ATENTAR A ESTRUTURA DA SINTAXE, A QUAL DEVE SER MANTIDA
         # CASO ALGUM DOS RECURSOS TF LOCALIZADOS NO DIRETORIO NAO NECESSITAR SER CRIADO, BASTA REMOVE-LO DA CONFIGURACAO ABAIXO
-        run: echo "::set-output name=matrix::[\"ecr\", \"s3\"]" 
+        run: echo "::set-output name=paths::[\"ecr\", \"s3\"]" 
 
   terraform-plan:
     needs: setup-terraform-paths
