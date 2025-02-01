@@ -5,11 +5,14 @@ on:
     branches:
       - 'infra-terraform'
 
+env:
+  terraform_path: "[ecr, s3]"
+
 jobs:
   setup-matrix:
     runs-on: ubuntu-latest
     outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
+      matrix: ${{ env.terraform_path }}
     steps:
       - name: Definir matriz de paths
         id: set-matrix
