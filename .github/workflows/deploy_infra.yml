@@ -5,22 +5,19 @@ on:
     branches:
       - 'infra-terraform'
 
-env:
-  terraform_path: "[ecr, s3]"
-
 jobs:
   setup-matrix:
     runs-on: ubuntu-latest
     outputs:
-      matrix: ${{ env.terraform_path }}
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
       - name: Definir matriz de paths
         id: set-matrix
-        run: echo "::set-output name=matrix::[ecr, s3]"
+        run: echo "::set-output name=matrix::[\"ecr\", \"s3\"]"
 
   terraform-plan:
+    needs: setup-matrix
     uses: ./.github/workflows/terraform_reusable_plan.yml
-    needs: setup-matrix 
     strategy:
       matrix:
         paths: ${{ fromJson(needs.setup-matrix.outputs.matrix) }}
