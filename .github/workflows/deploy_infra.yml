@@ -5,18 +5,15 @@ on:
     branches:
       - 'infra-terraform'
 
-env:
-  ACTIONS_STEP_DEBUG: false
-  ACTIONS_RUNNER_DEBUG: false
-
 jobs:
-  setup-matrix:
+  setup-terraform-paths:
+    name: Setting the Terraform Paths
     runs-on: ubuntu-latest
     outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
+      paths: ${{ steps.set-paths.outputs.paths }}
     steps:
       - name: Definir matriz de paths
-        id: set-matrix
+        id: set-paths
 
         # PARA CRIAR NOVOS RECURSOS VIA TERRAFORM, NECESSARIO ALTERAR APENAS ESSA CONFIGURACAO, INSERINDO O NOME DAS PASTA COM OS ARQUIVOS DO TERRAFORM DE CADA RECURSO AWS.
         # SE ATENTAR A ESTRUTURA DA SINTAXE, A QUAL DEVE SER MANTIDA
@@ -24,11 +21,11 @@ jobs:
         run: echo "::set-output name=matrix::[\"ecr\", \"s3\"]" 
 
   terraform-plan:
-    needs: setup-matrix
+    needs: setup-terraform-paths
     uses: ./.github/workflows/terraform_reusable_plan.yml
     strategy:
       matrix:
-        paths: ${{ fromJson(needs.setup-matrix.outputs.matrix) }}
+        paths: ${{ fromJson(needs.setup-terraform-paths.outputs.paths) }}
     with:
       environment: "Develop"
       resource_path: ${{ matrix.paths }}
@@ -45,21 +42,21 @@ jobs:
       run: echo "Waiting manual approve to CREATE the terraform resources..."
 
   terraform-apply:
-    needs: [manual-approval, setup-matrix]
+    needs: [manual-approval, setup-terraform-paths]
     uses: ./.github/workflows/terraform_reusable_apply.yml
     strategy:
       matrix:
-        paths: ${{ fromJson(needs.setup-matrix.outputs.matrix) }}
+        paths: ${{ fromJson(needs.setup-terraform-paths.outputs.paths) }}
     with:
       environment: "Develop"
       resource_path: ${{ matrix.paths }}
 
   manual-approval-validate-destroy:
     uses: ./.github/workflows/terraform_reusable_validate_destroy.yml
-    needs: [terraform-apply, setup-matrix]
+    needs: [terraform-apply, setup-terraform-paths]
     strategy:
       matrix:
-        paths: ${{ fromJson(needs.setup-matrix.outputs.matrix) }}
+        paths: ${{ fromJson(needs.setup-terraform-paths.outputs.paths) }}
     with:
       environment: "Develop"
       resource_path: ${{ matrix.paths }}
@@ -67,10 +64,10 @@ jobs:
   manual-approval-destroy:
     name: Manual Approval to REALLY DESTROY
     uses: ./.github/workflows/terraform_reusable_destroy.yml
-    needs: [manual-approval-validate-destroy, setup-matrix]
+    needs: [manual-approval-validate-destroy, setup-terraform-paths]
     strategy:
       matrix:
-        paths: ${{ fromJson(needs.setup-matrix.outputs.matrix) }}
+        paths: ${{ fromJson(needs.setup-terraform-paths.outputs.paths) }}
     with:
       environment: "Develop"
       resource_path: ${{ matrix.paths }}

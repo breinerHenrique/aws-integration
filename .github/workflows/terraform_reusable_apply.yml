@@ -11,10 +11,6 @@ on:
           type: string
           required: true
 
-env:
-  ACTIONS_STEP_DEBUG: false
-  ACTIONS_RUNNER_DEBUG: false
-
 jobs:
   terraform_apply:
     name: Terraform Apply - ${{ inputs.resource_path }}

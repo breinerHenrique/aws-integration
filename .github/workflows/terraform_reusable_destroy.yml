@@ -11,10 +11,6 @@ on:
           type: string
           required: true
 
-env:
-  ACTIONS_STEP_DEBUG: false
-  ACTIONS_RUNNER_DEBUG: false
-
 jobs:
   terraform_destroy:
     name: Terraform DESTROY - ${{ inputs.resource_path }}
