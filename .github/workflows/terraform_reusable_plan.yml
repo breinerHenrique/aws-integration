@@ -11,6 +11,10 @@ on:
           type: string
           required: true
 
+env:
+  ACTIONS_STEP_DEBUG: false
+  ACTIONS_RUNNER_DEBUG: false
+
 jobs:
   terraform_plan:
     name: Terraform Plan  - ${{ inputs.resource_path }}
