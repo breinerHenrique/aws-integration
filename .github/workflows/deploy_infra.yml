@@ -5,6 +5,10 @@ on:
     branches:
       - 'infra-terraform'
 
+env:
+  ACTIONS_STEP_DEBUG: false
+  ACTIONS_RUNNER_DEBUG: false
+
 jobs:
   setup-matrix:
     runs-on: ubuntu-latest
@@ -13,7 +17,11 @@ jobs:
     steps:
       - name: Definir matriz de paths
         id: set-matrix
-        run: echo "::set-output name=matrix::[\"s3\"]"
+
+        # PARA CRIAR NOVOS RECURSOS VIA TERRAFORM, NECESSARIO ALTERAR APENAS ESSA CONFIGURACAO, INSERINDO O NOME DAS PASTA COM OS ARQUIVOS DO TERRAFORM DE CADA RECURSO AWS.
+        # SE ATENTAR A ESTRUTURA DA SINTAXE, A QUAL DEVE SER MANTIDA
+        # CASO ALGUM DOS RECURSOS TF LOCALIZADOS NO DIRETORIO NAO NECESSITAR SER CRIADO, BASTA REMOVE-LO DA CONFIGURACAO ABAIXO
+        run: echo "::set-output name=matrix::[\"ecr\", \"s3\"]" 
 
   terraform-plan:
     needs: setup-matrix
