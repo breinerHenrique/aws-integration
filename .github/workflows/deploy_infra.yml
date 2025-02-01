@@ -6,11 +6,21 @@ on:
       - 'infra-terraform'
 
 jobs:
+  setup-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Definir matriz de paths
+        id: set-matrix
+        run: echo "::set-output name=matrix::[ecr, s3]"
+
   terraform-plan:
     uses: ./.github/workflows/terraform_reusable_plan.yml
+    needs: setup-matrix 
     strategy:
       matrix:
-        paths: ${{ vars.TERRAFORM_PATH }}
+        paths: ${{ fromJson(needs.setup-matrix.outputs.matrix) }}
     with:
       environment: "Develop"
       resource_path: ${{ matrix.paths }}
@@ -27,21 +37,21 @@ jobs:
       run: echo "Waiting manual approve to CREATE the terraform resources..."
 
   terraform-apply:
-    needs: manual-approval
+    needs: [manual-approval, setup-matrix]
     uses: ./.github/workflows/terraform_reusable_apply.yml
     strategy:
       matrix:
-        paths: [ecr, s3]
+        paths: ${{ fromJson(needs.setup-matrix.outputs.matrix) }}
     with:
       environment: "Develop"
       resource_path: ${{ matrix.paths }}
 
   manual-approval-validate-destroy:
     uses: ./.github/workflows/terraform_reusable_validate_destroy.yml
-    needs: terraform-apply 
+    needs: [terraform-apply, setup-matrix]
     strategy:
       matrix:
-        paths: [ecr, s3]
+        paths: ${{ fromJson(needs.setup-matrix.outputs.matrix) }}
     with:
       environment: "Develop"
       resource_path: ${{ matrix.paths }}
@@ -49,10 +59,10 @@ jobs:
   manual-approval-destroy:
     name: Manual Approval to REALLY DESTROY
     uses: ./.github/workflows/terraform_reusable_destroy.yml
-    needs: manual-approval-validate-destroy 
+    needs: [manual-approval-validate-destroy, setup-matrix]
     strategy:
       matrix:
-        paths: [ecr, s3]
+        paths: ${{ fromJson(needs.setup-matrix.outputs.matrix) }}
     with:
       environment: "Develop"
       resource_path: ${{ matrix.paths }}
