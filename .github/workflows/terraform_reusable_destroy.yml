@@ -14,6 +14,7 @@ on:
 jobs:
   get-branch:
     runs-on: ubuntu-latest
+    environment: Manual Approval DESTROY
     outputs:
       branch_name: ${{ steps.extract_branch.outputs.BRANCH_NAME }}
       custom_value: ${{ steps.set_variable.outputs.CUSTOM_VALUE }}
@@ -43,7 +44,6 @@ jobs:
     name: Terraform DESTROY - ${{ needs.get-branch.outputs.custom_value }} ${{ inputs.resource_path }}
     runs-on: ubuntu-latest
     needs: get-branch
-    environment: Manual Approval DESTROY
     permissions:
       id-token: write # This is required for requesting the JWT
       contents: read  # This is required for actions/checkout  
