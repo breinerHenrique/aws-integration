@@ -14,8 +14,11 @@ on:
 jobs:
   get-branch:
     runs-on: ubuntu-latest
+    outputs:
+      branch_name: ${{ steps.extract_branch.outputs.BRANCH_NAME }}
     steps:
       - name: Extract Branch Name
+        id: extract_branch
         run: echo "BRANCH_NAME=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
         
   terraform_plan:
@@ -28,7 +31,7 @@ jobs:
     defaults: # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
       run:
         shell: bash
-        working-directory: tf-aws-resources/$BRANCH_NAME/
+        working-directory: tf-aws-resources/${{ needs.get-branch.outputs.branch_name }}
 
     steps:
     # Checkout the repository to the GitHub Actions runner
