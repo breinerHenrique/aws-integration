@@ -30,7 +30,7 @@ jobs:
       resource_path: ${{ matrix.paths }}
 
   manual-approval:
-    name: Manual Approval to CREATE
+    name: Approval to CREATE
     runs-on: ubuntu-latest
     environment: Manual Approval CREATE
     needs: terraform-plan         
@@ -50,7 +50,8 @@ jobs:
       environment: "Develop"
       resource_path: ${{ matrix.paths }}
 
-  manual-approval-validate-destroy:
+  approval-validate-destroy:
+    name: Approval to VALIDATE DESTROY
     uses: ./.github/workflows/terraform_reusable_validate_destroy.yml
     needs: [terraform-apply, setup-terraform-paths]
     strategy:
@@ -60,10 +61,10 @@ jobs:
       environment: "Develop"
       resource_path: ${{ matrix.paths }}
       
-  manual-approval-destroy:
-    name: Manual Approval to REALLY DESTROY
+  approval-destroy:
+    name: Approval to REALLY DESTROY
     uses: ./.github/workflows/terraform_reusable_destroy.yml
-    needs: [manual-approval-validate-destroy, setup-terraform-paths]
+    needs: [approval-validate-destroy, setup-terraform-paths]
     strategy:
       matrix:
         paths: ${{ fromJson(needs.setup-terraform-paths.outputs.paths) }}
