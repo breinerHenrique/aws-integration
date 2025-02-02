@@ -16,13 +16,31 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       branch_name: ${{ steps.extract_branch.outputs.BRANCH_NAME }}
+      custom_value: ${{ steps.set_variable.outputs.CUSTOM_VALUE }}
     steps:
       - name: Extract Branch Name
         id: extract_branch
         run: echo "BRANCH_NAME=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
 
+      - name: Set Custom Variable Based on Branch
+        id: set_variable
+        run: |
+          if [[ "${GITHUB_REF#refs/heads/}" == "main" ]]; then
+            echo "CUSTOM_VALUE=production" >> $GITHUB_ENV
+            echo "CUSTOM_VALUE=production" >> $GITHUB_OUTPUT
+          elif [[ "${GITHUB_REF#refs/heads/}" == "staging" ]]; then
+            echo "CUSTOM_VALUE=staging" >> $GITHUB_ENV
+            echo "CUSTOM_VALUE=staging" >> $GITHUB_OUTPUT
+          elif [[ "${GITHUB_REF#refs/heads/}" == "infra-terraform" ]]; then
+            echo "CUSTOM_VALUE=develop" >> $GITHUB_ENV
+            echo "CUSTOM_VALUE=develop" >> $GITHUB_OUTPUT
+          else
+            echo "CUSTOM_VALUE=Unknown Environment" >> $GITHUB_ENV
+            echo "CUSTOM_VALUE=Unknown Environment" >> $GITHUB_OUTPUT
+          fi 
+
   terraform_apply:
-    name: Terraform Apply - ${{ inputs.resource_path }}
+    name: Terraform Apply - ${{ needs.get-branch.outputs.custom_value }} ${{ inputs.resource_path }}
     runs-on: ubuntu-latest
     needs: get-branch
     permissions:
@@ -31,7 +49,7 @@ jobs:
     defaults: # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
       run:
         shell: bash
-        working-directory: tf-aws-resources/${{ needs.get-branch.outputs.branch_name }}/
+        working-directory: tf-aws-resources/${{ needs.get-branch.outputs.custom_value }}
 
     steps:
     # Checkout the repository to the GitHub Actions runner
@@ -51,13 +69,13 @@ jobs:
         terraform_version: "1.1.7"
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
-    - name: Terraform Init - ${{ inputs.resource_path }}
+    - name: Terraform Init - ${{ needs.get-branch.outputs.custom_value }} ${{ inputs.resource_path }}
       run: |
         cd ${{ inputs.resource_path }}
         terraform init
 
     # Generates an execution apply for Terraform
-    - name: Terraform Apply - ${{ inputs.resource_path }}
+    - name: Terraform Apply - ${{ needs.get-branch.outputs.custom_value }} ${{ inputs.resource_path }}
       run: |
         cd ${{ inputs.resource_path }}
         terraform apply --auto-approve

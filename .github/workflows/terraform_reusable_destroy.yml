@@ -12,9 +12,37 @@ on:
           required: true
 
 jobs:
-  terraform_destroy:
-    name: Terraform DESTROY - ${{ inputs.resource_path }}
+  get-branch:
     runs-on: ubuntu-latest
+    outputs:
+      branch_name: ${{ steps.extract_branch.outputs.BRANCH_NAME }}
+      custom_value: ${{ steps.set_variable.outputs.CUSTOM_VALUE }}
+    steps:
+      - name: Extract Branch Name
+        id: extract_branch
+        run: echo "BRANCH_NAME=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+
+      - name: Set Custom Variable Based on Branch
+        id: set_variable
+        run: |
+          if [[ "${GITHUB_REF#refs/heads/}" == "main" ]]; then
+            echo "CUSTOM_VALUE=production" >> $GITHUB_ENV
+            echo "CUSTOM_VALUE=production" >> $GITHUB_OUTPUT
+          elif [[ "${GITHUB_REF#refs/heads/}" == "staging" ]]; then
+            echo "CUSTOM_VALUE=staging" >> $GITHUB_ENV
+            echo "CUSTOM_VALUE=staging" >> $GITHUB_OUTPUT
+          elif [[ "${GITHUB_REF#refs/heads/}" == "infra-terraform" ]]; then
+            echo "CUSTOM_VALUE=develop" >> $GITHUB_ENV
+            echo "CUSTOM_VALUE=develop" >> $GITHUB_OUTPUT
+          else
+            echo "CUSTOM_VALUE=Unknown Environment" >> $GITHUB_ENV
+            echo "CUSTOM_VALUE=Unknown Environment" >> $GITHUB_OUTPUT
+          fi 
+
+  terraform_destroy:
+    name: Terraform DESTROY - ${{ needs.get-branch.outputs.custom_value }} ${{ inputs.resource_path }}
+    runs-on: ubuntu-latest
+    needs: get-branch
     environment: Manual Approval DESTROY
     permissions:
       id-token: write # This is required for requesting the JWT
@@ -22,7 +50,7 @@ jobs:
     defaults: # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
       run:
         shell: bash
-        working-directory: tf-aws-resources/develop/
+        working-directory: tf-aws-resources/${{ needs.get-branch.outputs.custom_value }}
 
     steps:
     # Checkout the repository to the GitHub Actions runner
@@ -48,7 +76,7 @@ jobs:
         terraform init
 
     # Generates an execution destroy for Terraform
-    - name: Terraform Destroy - ${{ inputs.resource_path }}
+    - name: Terraform Destroy - ${{ needs.get-branch.outputs.custom_value }} ${{ inputs.resource_path }}
       run: |
         cd ${{ inputs.resource_path }}
         terraform destroy --auto-approve
