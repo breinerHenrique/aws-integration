@@ -16,6 +16,8 @@ module "ecs_cluster" {
 }
 
 module "ecs_service" {
+  for_each = toset(var.subnet_ids)
+
   source = "terraform-aws-modules/ecs/aws//modules/service"
 
   #name        = "example"
@@ -32,7 +34,7 @@ module "ecs_service" {
       memory    = 64
       essential = true
       image     = "906394416424.dkr.ecr.us-west-2.amazonaws.com/aws-for-fluent-bit:stable"
-      enable_cloudwatch_logging = true
+      enable_cloudwatch_logging = false
       # firelens_configuration = {
       #   type = "fluentbit"
       # }
@@ -60,7 +62,7 @@ module "ecs_service" {
         condition     = "START"
       }]
 
-      enable_cloudwatch_logging = true
+      enable_cloudwatch_logging = false
       # log_configuration = {
       #   logDriver = "awsfirelens"
       #   options = {
@@ -94,7 +96,7 @@ module "ecs_service" {
   #   }
   # }
 
-  # subnet_ids = ["subnet-abcde012", "subnet-bcde012a", "subnet-fghi345a"]
+  subnet_ids = "${each.value}"
   # security_group_rules = {
   #   alb_ingress_3000 = {
   #     type                     = "ingress"

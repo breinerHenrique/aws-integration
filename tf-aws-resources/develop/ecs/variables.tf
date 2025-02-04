@@ -3,6 +3,11 @@ variable "cluster_name" {
   default = "cluster-ecs-intrack"
 }
 
+variable "subnet_ids" {
+  type = list(string)
+  default = [ "intrack_backend", "intrack_mqtt", "intrack_mobile" ]
+}
+
 variable "tags" {
   type = map(string)
   default = {
