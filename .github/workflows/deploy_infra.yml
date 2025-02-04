@@ -53,8 +53,7 @@ jobs:
   approval-validate-destroy:
     name: Approval to VALIDATE DESTROY
     uses: ./.github/workflows/terraform_reusable_validate_destroy.yml
-    #needs: [terraform-apply, setup-terraform-paths]
-    needs: [setup-terraform-paths]
+    needs: [terraform-apply, setup-terraform-paths]
     strategy:
       matrix:
         paths: ${{ fromJson(needs.setup-terraform-paths.outputs.paths) }}
