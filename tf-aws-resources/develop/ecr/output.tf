@@ -1,6 +1,6 @@
 output "repository_name" {
   value = {
-    for k, v in module.ecr : k => v.repository_name
+    for k, v in module.ecr : k => repository_name
   }
   description = "Name of the repository."
 }
