@@ -1,7 +1,14 @@
-# variable "repository_name" {
-#   type = list(string)
-# }
+variable "cluster_name" {
+  type = string
+  default = "cluster-ecs-intrack"
+}
 
-# variable "tags" {
-#   type = map(string)
-# }
+variable "tags" {
+  type = map(string)
+  default = {
+    Terraform   = "true"
+    Environment = "dev"
+    Repository = ""
+    Project = "DevOps"
+  }
+}
