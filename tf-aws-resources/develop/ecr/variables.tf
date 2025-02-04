@@ -1,6 +1,6 @@
 variable "repository_name" {
   type = list(string)
-  default = [ "app1-repo", "app2-repo", "app3-repo" ]
+  default = [ "intrack_backend", "intrack_mqtt", "intrack_mobile" ]
 }
 
 variable "tags" {
@@ -8,5 +8,7 @@ variable "tags" {
   default = {
     Terraform   = "true"
     Environment = "dev"
+    Repository = ""
+    Project = "DevOps"
   }
 }
