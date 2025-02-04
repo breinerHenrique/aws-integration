@@ -1,5 +1,5 @@
 module "ecr" {
-  for_each = toset([local.repository_name])
+  for_each = toset(local.repository_name)
 
   source = "terraform-aws-modules/ecr/aws"
 
