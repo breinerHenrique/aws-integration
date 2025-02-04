@@ -32,6 +32,7 @@ module "ecs_service" {
       memory    = 64
       essential = true
       image     = "906394416424.dkr.ecr.us-west-2.amazonaws.com/aws-for-fluent-bit:stable"
+      enable_cloudwatch_logging = true
       # firelens_configuration = {
       #   type = "fluentbit"
       # }
