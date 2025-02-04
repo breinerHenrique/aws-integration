@@ -1,9 +1,9 @@
 module "ecr" {
-  for_each = toset(local.repository_name)
+  for_each = toset(var.repository_name)
 
   source = "terraform-aws-modules/ecr/aws"
 
-  repository_name = "${each.key}"
+  repository_name = "${each.value}"
 
   # repository_read_write_access_arns = ["arn:aws:iam::012345678901:role/terraform"]
   repository_lifecycle_policy = jsonencode({
@@ -24,5 +24,5 @@ module "ecr" {
     ]
   })
 
-  tags = local.tags
+  tags = var.tags
   }
