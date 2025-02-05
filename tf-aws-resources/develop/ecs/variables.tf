@@ -5,7 +5,7 @@ variable "cluster_name" {
 
 variable "subnet_ids" {
   type = list(string)
-  default = [ "intrack_backend", "intrack_mqtt", "intrack_mobile" ]
+  default = [ "subnet-0fcba3d1ac0b31429", "subnet-0c879643e41e687e2" ]
 }
 
 variable "tags" {
