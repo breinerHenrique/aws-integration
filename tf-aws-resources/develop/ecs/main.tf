@@ -16,8 +16,6 @@ module "ecs_cluster" {
 }
 
 module "ecs_service" {
-  for_each = toset(var.subnet_ids)
-
   source = "terraform-aws-modules/ecs/aws//modules/service"
 
   #name        = "example"
@@ -96,7 +94,7 @@ module "ecs_service" {
   #   }
   # }
 
-  subnet_ids = "${each.value}"
+  subnet_ids = [ "subnet-0fcba3d1ac0b31429", "subnet-0c879643e41e687e2" ]
   # security_group_rules = {
   #   alb_ingress_3000 = {
   #     type                     = "ingress"
