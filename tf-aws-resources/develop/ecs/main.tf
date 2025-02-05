@@ -24,6 +24,8 @@ module "ecs_service" {
   cpu    = 100
   memory = 128
 
+  create_task_definition = false
+
   # Container definition(s)
   container_definitions = {
 
