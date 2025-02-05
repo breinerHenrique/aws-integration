@@ -26,6 +26,7 @@ module "ecs_service" {
 
   launch_type = "EC2"
   propagate_tags = "SERVICE"
+  enable_autoscaling = false
 
   # Container definition(s)
   container_definitions = {
