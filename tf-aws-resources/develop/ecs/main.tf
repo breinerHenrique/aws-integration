@@ -18,63 +18,65 @@ module "ecs_cluster" {
 module "ecs_service" {
   source = "terraform-aws-modules/ecs/aws//modules/service"
 
-  #name        = "example"
+  name        = "service1"
   cluster_arn = module.ecs_cluster.arn
 
-  cpu    = 100
-  memory = 128
+  # cpu    = 100
+  # memory = 128
 
+  launch_type = "EC2"
   create_task_definition = false
+  propagate_tags = "SERVICE"
 
   # Container definition(s)
-  container_definitions = {
+  # container_definitions = {
 
-    fluent-bit = {
-      cpu       = 50
-      memory    = 64
-      essential = true
-      image     = "906394416424.dkr.ecr.us-west-2.amazonaws.com/aws-for-fluent-bit:stable"
-      enable_cloudwatch_logging = false
-      # firelens_configuration = {
-      #   type = "fluentbit"
-      # }
-      memory_reservation = 50
-    }
+  #   fluent-bit = {
+  #     cpu       = 50
+  #     memory    = 64
+  #     essential = true
+  #     image     = "906394416424.dkr.ecr.us-west-2.amazonaws.com/aws-for-fluent-bit:stable"
+  #     enable_cloudwatch_logging = false
+  #     # firelens_configuration = {
+  #     #   type = "fluentbit"
+  #     # }
+  #     memory_reservation = 50
+  #   }
 
-    ecs-sample = {
-      cpu       = 50
-      memory    = 64
-      essential = true
-      image     = "public.ecr.aws/aws-containers/ecsdemo-frontend:776fd50"
-      port_mappings = [
-        {
-          name          = "ecs-sample"
-          containerPort = 80
-          protocol      = "tcp"
-        }
-      ]
+  #   ecs-sample = {
+  #     cpu       = 50
+  #     memory    = 64
+  #     essential = true
+  #     image     = "public.ecr.aws/aws-containers/ecsdemo-frontend:776fd50"
+  #     port_mappings = [
+  #       {
+  #         name          = "ecs-sample"
+  #         containerPort = 80
+  #         protocol      = "tcp"
+  #       }
+  #     ]
 
-      # Example image used requires access to write to root filesystem
-      readonly_root_filesystem = false
+  #     # Example image used requires access to write to root filesystem
+  #     readonly_root_filesystem = false
 
-      dependencies = [{
-        containerName = "fluent-bit"
-        condition     = "START"
-      }]
+  #     dependencies = [{
+  #       containerName = "fluent-bit"
+  #       condition     = "START"
+  #     }]
 
-      enable_cloudwatch_logging = false
-      # log_configuration = {
-      #   logDriver = "awsfirelens"
-      #   options = {
-      #     Name                    = "firehose"
-      #     region                  = "eu-west-1"
-      #     delivery_stream         = "my-stream"
-      #     log-driver-buffer-limit = "2097152"
-      #   }
-      # }
-      memory_reservation = 50
-    }
-  }
+  #     enable_cloudwatch_logging = false
+  #     # log_configuration = {
+  #     #   logDriver = "awsfirelens"
+  #     #   options = {
+  #     #     Name                    = "firehose"
+  #     #     region                  = "eu-west-1"
+  #     #     delivery_stream         = "my-stream"
+  #     #     log-driver-buffer-limit = "2097152"
+  #     #   }
+  #     # }
+  #     memory_reservation = 50
+  #   }
+  # }
 
   # service_connect_configuration = {
   #   namespace = "example"
