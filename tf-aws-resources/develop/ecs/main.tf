@@ -22,6 +22,28 @@ resource "aws_iam_role" "ecs_instance_role" {
     Version = "2012-10-17"
     Statement = [
       {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Sid    = ""
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+      },
+    ]
+  })
+
+  tags = var.tags
+}
+
+resource "aws_iam_role_policy" "ecs_instance_policy" {
+  depends_on = [ aws_iam_role.ecs_instance_role ]
+  name = "${var.cluster_name}_instace_role"
+  role = aws_iam_role.ecs_instance_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
         Action = [
           "ecr:BatchCheckLayerAvailability",
           "ecr:BatchGetImage",
@@ -31,21 +53,17 @@ resource "aws_iam_role" "ecs_instance_role" {
         Effect = "Allow"
         Resource = "*"
         Sid    = "Role used on ECS Instances from ECS"
-        }
+      }
     ]
   })
-
-  tags = var.tags
 }
 
 resource "aws_iam_role_policy_attachment" "AmazonSSMManagedInstanceCore" {
-
   role       = aws_iam_role.ecs_instance_role.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
 
 resource "aws_iam_role_policy_attachment" "AmazonEC2RoleforSSM" {
-
   role       = aws_iam_role.ecs_instance_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM"
 }
