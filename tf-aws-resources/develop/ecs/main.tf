@@ -35,27 +35,34 @@ resource "aws_iam_role" "ecs_instance_role" {
   tags = var.tags
 }
 
-resource "aws_iam_role_policy" "ecs_instance_policy" {
-  depends_on = [ aws_iam_role.ecs_instance_role ]
-  name = "${var.cluster_name}_instace_role"
-  role = aws_iam_role.ecs_instance_role.id
+# resource "aws_iam_role_policy" "ecs_instance_policy" {
+#   depends_on = [ aws_iam_role.ecs_instance_role ]
+#   name = "${var.cluster_name}_instace_role"
+#   role = aws_iam_role.ecs_instance_role.id
 
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = [
-          "ecr:BatchCheckLayerAvailability",
-          "ecr:BatchGetImage",
-          "ecr:GetDownloadUrlForLayer",
-          "ecr:GetAuthorizationToken"
-        ]
-        Effect = "Allow"
-        Resource = "*"
-        Sid    = ""
-      }
-    ]
-  })
+#   policy = jsonencode({
+#     Version = "2012-10-17"
+#     Statement = [
+#       {
+#         Action = [
+#           "ecr:BatchCheckLayerAvailability",
+#           "ecr:BatchGetImage",
+#           "ecr:GetDownloadUrlForLayer",
+#           "ecr:GetAuthorizationToken",
+#           "ecs:RegisterContainerInstance"
+#         ]
+#         Effect = "Allow"
+#         Resource = "*"
+#         Sid    = ""
+#       }
+#     ]
+#   })
+# }
+
+resource "aws_iam_role_policy_attachment" "AmazonEC2ContainerServiceforEC2Role" {
+  depends_on = [ aws_iam_role.ecs_instance_role ]
+  role       = aws_iam_role.ecs_instance_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerServiceforEC2Role"
 }
 
 resource "aws_iam_role_policy_attachment" "AmazonSSMManagedInstanceCore" {
