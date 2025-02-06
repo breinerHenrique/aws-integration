@@ -29,11 +29,9 @@ resource "aws_iam_role" "ecs_instance_role" {
           "ecr:GetAuthorizationToken"
         ]
         Effect = "Allow"
-        Sid    = ""
-        Principal = {
-          Service = "ec2.amazonaws.com"
+        Resource = "*"
+        Sid    = "Role used on ECS Instances from ECS"
         }
-      },
     ]
   })
 
