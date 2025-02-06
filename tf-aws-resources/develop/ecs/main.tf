@@ -18,8 +18,6 @@ module "ecs_cluster" {
 resource "aws_iam_role" "ecs_instance_role" {
   name = "${var.cluster_name}_instace_role"
 
-  # Terraform's "jsonencode" function converts a
-  # Terraform expression result to valid JSON syntax.
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -32,12 +30,26 @@ resource "aws_iam_role" "ecs_instance_role" {
         ]
         Effect = "Allow"
         Sid    = ""
-        Resource = "*"
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
       },
     ]
   })
 
   tags = var.tags
+}
+
+resource "aws_iam_role_policy_attachment" "AmazonSSMManagedInstanceCore" {
+
+  role       = aws_iam_role.ecs_instance_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+}
+
+resource "aws_iam_role_policy_attachment" "AmazonEC2RoleforSSM" {
+
+  role       = aws_iam_role.ecs_instance_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM"
 }
 
 resource "aws_launch_template" "ecs" {
