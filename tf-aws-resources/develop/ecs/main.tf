@@ -52,7 +52,7 @@ resource "aws_iam_role_policy" "ecs_instance_policy" {
         ]
         Effect = "Allow"
         Resource = "*"
-        Sid    = "Role used on ECS Instances from ECS"
+        Sid    = ""
       }
     ]
   })
