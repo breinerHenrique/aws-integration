@@ -1,13 +1,7 @@
-# output "repository_name" {
-#   value = {
-#     for k, v in module.ecr : k => v.repository_name
-#   }
-#   description = "Name of the repository."
-# }
+output "ecs_cluster_id" {
+    value = module.ecs_cluster.id
+}
 
-# output "repository_arn" {
-#   value = {
-#     for k, v in module.ecr : k => v.repository_arn
-#   }
-#   description = "Full ARN of the repository."
-# }
+output "ecs_cluster_arn" {
+    value = module.ecs_cluster.arn
+}
