@@ -59,22 +59,31 @@ resource "aws_iam_role_policy" "ecs_instance_policy" {
 }
 
 resource "aws_iam_role_policy_attachment" "AmazonSSMManagedInstanceCore" {
+  depends_on = [ aws_iam_role.ecs_instance_role ]
   role       = aws_iam_role.ecs_instance_role.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
 
 resource "aws_iam_role_policy_attachment" "AmazonEC2RoleforSSM" {
+  depends_on = [ aws_iam_role.ecs_instance_role ]
   role       = aws_iam_role.ecs_instance_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM"
 }
 
+resource "aws_iam_instance_profile" "ecs_instance_profile" {
+  depends_on = [ aws_iam_role.ecs_instance_role ]
+  name = "${var.cluster_name}_instace_profile"
+  role = aws_iam_role.ecs_instance_role.name
+}
+
 resource "aws_launch_template" "ecs" {
+  depends_on = [ aws_iam_instance_profile.ecs_instance_profile ]
   name_prefix   = var.cluster_name
   image_id      = var.ami_id
   instance_type = var.instance_type
 
   iam_instance_profile {
-    name =  aws_iam_role.ecs_instance_role.name
+    arn =  aws_iam_instance_profile.ecs_instance_profile.arn
   }
 
   ebs_optimized = true
