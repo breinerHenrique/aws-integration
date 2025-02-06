@@ -29,7 +29,7 @@ resource "aws_iam_role" "ecs_instance_role" {
           "ecr:BatchGetImage",
           "ecr:GetDownloadUrlForLayer",
           "ecr:GetAuthorizationToken"
-        ],
+        ]
         Effect = "Allow"
         Sid    = ""
         Resource = "*"
