@@ -73,8 +73,8 @@ resource "aws_launch_template" "ecs" {
   image_id      = var.ami_id
   instance_type = var.instance_type
 
-    iam_instance_profile {
-    arn = aws_iam_role.ecs_instance_role.arn
+  iam_instance_profile {
+    name =  aws_iam_role.ecs_instance_role.name
   }
 
   ebs_optimized = true
