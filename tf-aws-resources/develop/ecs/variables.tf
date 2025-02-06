@@ -11,6 +11,7 @@ variable "subnet_ids" {
 variable "ami_id" {
   description = "AMI ID for ECS instances"
   type        = string
+  default = "ami-004021b186a0c56f8"
 }
 
 variable "instance_type" {
@@ -35,11 +36,6 @@ variable "max_capacity" {
   description = "Maximum number of ECS instances"
   type        = number
   default = 2
-}
-
-variable "subnet_ids" {
-  description = "List of subnet IDs for the Auto Scaling Group"
-  type        = list(string)
 }
 
 variable "tags" {
