@@ -15,10 +15,52 @@ module "ecs_cluster" {
   tags = var.tags
 }
 
+resource "aws_iam_role" "ecs_instance_role" {
+  name = "${var.cluster_name}_instace_role"
+
+  # Terraform's "jsonencode" function converts a
+  # Terraform expression result to valid JSON syntax.
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:BatchGetImage",
+          "ecr:GetDownloadUrlForLayer",
+          "ecr:GetAuthorizationToken"
+        ],
+        Effect = "Allow"
+        Sid    = ""
+        Resource = "*"
+      },
+    ]
+  })
+
+  tags = var.tags
+}
+
 resource "aws_launch_template" "ecs" {
   name_prefix   = var.cluster_name
   image_id      = var.ami_id
   instance_type = var.instance_type
+
+    iam_instance_profile {
+    arn = aws_iam_role.ecs_instance_role.arn
+  }
+
+  ebs_optimized = true
+  block_device_mappings {
+    device_name = "/dev/sdf"
+
+    ebs {
+      volume_size = 20
+    }
+  }
+
+  monitoring {
+    enabled = true
+  }
 
   user_data = base64encode(<<-EOF
               #!/bin/bash
