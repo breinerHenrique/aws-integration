@@ -4,7 +4,8 @@ on:
   workflow_dispatch
 
 jobs:
-  docker:
+  docker-build-push:
+    name: "Docker Build"
     runs-on: ubuntu-latest
 
     permissions:
@@ -31,12 +32,6 @@ jobs:
       with:
         registries: "236730285067"
 
-    - name: Get the github commit ID
-      id: commit-id
-      shell: bash
-      run: |
-        echo "sha_short=$(git rev-parse --short "$GITHUB_SHA")" >> "$GITHUB_ENV"
-
     - name: Build, tag, and push image to Amazon ECR
       id: build-publish
       shell: bash
@@ -49,5 +44,5 @@ jobs:
           docker push "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
           echo "IMAGE $IMAGE_TAG is pushed to $ECR_REGISTRY/$ECR_REPOSITORY"
           echo "image_tag=$IMAGE_TAG" 
-          echo "full_image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+          echo "full_image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"    
 
