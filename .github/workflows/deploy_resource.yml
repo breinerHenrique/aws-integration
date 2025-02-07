@@ -1,9 +1,10 @@
 name: Deploy resource to AWS
 
-on: workflow_dispatch
+on: 
+  workflow_dispatch
 
 jobs:
-  deploy:
+  docker:
     runs-on: ubuntu-latest
 
     permissions:
