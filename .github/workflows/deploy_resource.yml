@@ -44,5 +44,67 @@ jobs:
           docker push "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
           echo "IMAGE $IMAGE_TAG is pushed to $ECR_REGISTRY/$ECR_REPOSITORY"
           echo "image_tag=$IMAGE_TAG" 
-          echo "full_image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"    
+          echo "full_image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+          echo "full_image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_ENV
+          echo "image_tag=$IMAGE_TAG" >> $GITHUB_OUTPUT
+          echo "full_image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
+  ecs-deploy:
+    name: "Create a task definition and ECS service and deploy"
+    needs: docker-build-push
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      contents: read
+      
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Configure AWS Credentials using OIDC
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: us-east-1
+        role-to-assume: arn:aws:iam::236730285067:role/role_GitHubActionsIntegration
+
+    - name: Render ECS task definition
+      id: render-task-def
+      run: |
+        jq --arg IMAGE_URI "${{ needs.docker-build-push.outputs.full_image }}" '.containerDefinitions[0].image=$IMAGE_URI' task-definition.json > task-definition-updated.json
+      
+    - name: Register new ECS task definition
+      id: register-task-def
+      uses: aws-actions/amazon-ecs-register-task-definition@v1
+      with:
+        task-definition: task-definition-updated.json
+  
+    - name: Check if ECS service exists
+      id: check-service
+      run: |
+        SERVICE_NAME="intrack-service"
+        CLUSTER_NAME="intrack-cluster"
+        if aws ecs describe-services --cluster $CLUSTER_NAME --services $SERVICE_NAME | jq -e '.services | length > 0'; then
+          echo "service_exists=true" >> $GITHUB_OUTPUT
+        else
+          echo "service_exists=false" >> $GITHUB_OUTPUT
+        fi
+  
+    - name: Create ECS service if not exists
+      if: steps.check-service.outputs.service_exists == 'false'
+      run: |
+        aws ecs create-service \
+          --cluster intrack-cluster \
+          --service-name intrack-service \
+          --task-definition ${{ steps.register-task-def.outputs.task-definition-arn }} \
+          --launch-type FARGATE \
+          --network-configuration "awsvpcConfiguration={subnets=[subnet-12345678],securityGroups=[sg-12345678],assignPublicIp=ENABLED}" \
+          --desired-count 1
+  
+    - name: Update ECS service (if exists)
+      if: steps.check-service.outputs.service_exists == 'true'
+      run: |
+        aws ecs update-service \
+          --cluster intrack-cluster \
+          --service intrack-service \
+          --task-definition ${{ steps.register-task-def.outputs.task-definition-arn }}
