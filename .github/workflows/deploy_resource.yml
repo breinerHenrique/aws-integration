@@ -83,7 +83,7 @@ jobs:
       id: register-task-def
       uses: aws-actions/amazon-ecs-deploy-task-definition@v2
       with:
-        task-definition: task-definition-updated.json
+        task-definition: ecs-service-backend/task-definition-updated.json
   
     - name: Check if ECS service exists
       id: check-service
