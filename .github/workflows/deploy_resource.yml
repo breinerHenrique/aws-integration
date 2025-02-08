@@ -111,5 +111,5 @@ jobs:
       run: |
         aws ecs update-service \
           --cluster $CLUSTER_NAME \
-          --service #SERVICE_NAME \
+          --service $SERVICE_NAME \
           --task-definition ${{ steps.register-task-def.outputs.task-definition-arn }}
