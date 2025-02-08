@@ -75,7 +75,7 @@ jobs:
       
     - name: Register new ECS task definition
       id: register-task-def
-      uses: aws-actions/amazon-ecs-register-task-definition@v1
+      uses: aws-actions/amazon-ecs-deploy-task-definition@v2
       with:
         task-definition: task-definition-updated.json
   
