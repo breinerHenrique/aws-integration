@@ -99,8 +99,8 @@ jobs:
       if: steps.check-service.outputs.service_exists == 'false'
       run: |
         aws ecs create-service \
-          --cluster $CLUSTER_NAME \
-          --service-name $SERVICE_NAME \
+          --cluster cluster-ecs-intrack \
+          --service-name nginx \
           --task-definition ${{ steps.register-task-def.outputs.task-definition-arn }} \
           --launch-type EC2 \
           --network-configuration "awsvpcConfiguration={subnets=[subnet-059c736233d3910fb],securityGroups=[sg-068928c1391134388],assignPublicIp=ENABLED}" \
@@ -110,6 +110,6 @@ jobs:
       if: steps.check-service.outputs.service_exists == 'true'
       run: |
         aws ecs update-service \
-          --cluster $CLUSTER_NAME \
-          --service $SERVICE_NAME \
+          --cluster cluster-ecs-intrack \
+          --service nginx \
           --task-definition ${{ steps.register-task-def.outputs.task-definition-arn }}
