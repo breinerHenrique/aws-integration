@@ -1,6 +1,5 @@
 {
     "family": "intrack-task-nginx",
-    "networkMode": "awsvpc",
     "executionRoleArn": "arn:aws:iam::236730285067:role/ecsTaskExecutionRole",
     "cpu": "256",
     "memory": "512",
