@@ -77,7 +77,7 @@ jobs:
         fi
 
     - name: Create IAM Role for ECS (if not exists)
-      if: steps.check-role.outputs.service_exists == 'false'
+      if: steps.check-role.outputs.role_exists == 'false'
       run: |
         aws iam create-role \
           --role-name ecsTaskExecutionRole \
@@ -96,7 +96,7 @@ jobs:
         echo "IAM Role ecsTaskExecutionRole created."
 
     - name: Attach Policy to Role
-      if: steps.check-role.outputs.service_exists == 'false'
+      if: steps.check-role.outputs.role_exists == 'false'
       run: |
         aws iam attach-role-policy \
           --role-name ecsTaskExecutionRole \
