@@ -59,7 +59,6 @@ jobs:
         shell: bash
         working-directory: ecs-service-backend
     
-
     permissions:
       id-token: write
       contents: read
@@ -88,8 +87,8 @@ jobs:
     - name: Check if ECS service exists
       id: check-service
       run: |
-        SERVICE_NAME="intrack-service"
-        CLUSTER_NAME="intrack-cluster"
+        SERVICE_NAME="nginx"
+        CLUSTER_NAME="cluster-ecs-intrack"
         if aws ecs describe-services --cluster $CLUSTER_NAME --services $SERVICE_NAME | jq -e '.services | length > 0'; then
           echo "service_exists=true" >> $GITHUB_OUTPUT
         else
@@ -100,17 +99,17 @@ jobs:
       if: steps.check-service.outputs.service_exists == 'false'
       run: |
         aws ecs create-service \
-          --cluster intrack-cluster \
-          --service-name intrack-service \
+          --cluster $CLUSTER_NAME \
+          --service-name $SERVICE_NAME \
           --task-definition ${{ steps.register-task-def.outputs.task-definition-arn }} \
-          --launch-type FARGATE \
-          --network-configuration "awsvpcConfiguration={subnets=[subnet-12345678],securityGroups=[sg-12345678],assignPublicIp=ENABLED}" \
+          --launch-type EC2 \
+          --network-configuration "awsvpcConfiguration={subnets=[subnet-059c736233d3910fb],securityGroups=[sg-068928c1391134388],assignPublicIp=ENABLED}" \
           --desired-count 1
   
     - name: Update ECS service (if exists)
       if: steps.check-service.outputs.service_exists == 'true'
       run: |
         aws ecs update-service \
-          --cluster intrack-cluster \
-          --service intrack-service \
+          --cluster $CLUSTER_NAME \
+          --service #SERVICE_NAME \
           --task-definition ${{ steps.register-task-def.outputs.task-definition-arn }}
