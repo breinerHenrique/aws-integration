@@ -103,6 +103,7 @@ jobs:
           --service-name nginx \
           --task-definition ${{ steps.register-task-def.outputs.task-definition-arn }} \
           --launch-type EC2 \
+          --network-configuration "awsvpcConfiguration={subnets=[subnet-059c736233d3910fb],securityGroups=[sg-068928c1391134388]" \
           --desired-count 1
   
     - name: Update ECS service (if exists)
