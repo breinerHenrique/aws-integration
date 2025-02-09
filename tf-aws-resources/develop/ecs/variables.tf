@@ -9,9 +9,9 @@ variable "subnet_ids" {
 }
 
 variable "ami_id" {
-  description = "AMI ID for ECS instances - Amazon ECS-Optimized Amazon Linux 2023 (AL2023) x86_64 AMI"
+  description = "AMI ID for ECS instances - amzn-ami-2018.03.20241010-amazon-ecs-optimized"
   type        = string
-  default = "ami-00a5db12518bda3ed"
+  default = "ami-0419538084bce80f7"
 }
 
 variable "instance_type" {
