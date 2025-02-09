@@ -8,6 +8,15 @@
         "name": "intrack-container-nginx",
         "image": "PLACEHOLDER",
         "essential": true,
+        "logConfiguration": {
+          "logDriver": "aws-logs",
+          "options": {
+              "awslogs-group": "PLACEHOLDER",
+              "awslogs-create-group": true,
+              "awslogs-region": "us-east-1",
+              "awslogs-stream-prefix": "ecs"
+          }
+        },
         "portMappings": [
           {
             "containerPort": 80,
