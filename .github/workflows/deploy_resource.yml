@@ -158,7 +158,7 @@ jobs:
         jq --arg IMAGE_URI "${{ needs.docker-build-push.outputs.full_image }}" \
         --arg LOG_GROUP "$LOG_GROUP_NAME" \
         '.containerDefinitions[0].image=$IMAGE_URI' |
-        '.containerDefinitions[0].logConfiguration.options."awslogs-group"=$LOG_GROUP' \
+        '.containerDefinitions[0].logConfiguration.options.awslogs-group=$LOG_GROUP' \
         task-definition.json > task-definition-updated.json
       
     - name: Register new ECS task definition
