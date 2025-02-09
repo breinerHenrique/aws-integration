@@ -49,13 +49,16 @@ jobs:
           echo "image_tag=$IMAGE_TAG" >> $GITHUB_OUTPUT
           echo "full_image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
-  create-iam-role:
-    name: "Create IAM Role for ECS Task"
+  create-aws-services:
+    name: "Create IAM Role and Log Group"
     runs-on: ubuntu-latest
     needs: docker-build-push
     permissions:
       id-token: write
       contents: read
+    outputs:
+      log_group_exists: ${{ steps.check-log-group.outputs.log_group_exists }}
+      role_exists: ${{ steps.check-role.outputs.role_exists }}
 
     steps:
     - name: Checkout repository
@@ -103,33 +106,6 @@ jobs:
           --role-name ecsTaskExecutionRole \
           --policy-arn arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
         echo "Policy attached to ecsTaskExecutionRole."
-  
-  ecs-deploy:
-    name: "Create a task definition and ECS service and deploy"
-    needs: [docker-build-push, create-iam-role]
-    runs-on: ubuntu-latest
-    
-    defaults: # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
-      run:
-        shell: bash
-        working-directory: ecs-service-backend
-    
-    permissions:
-      id-token: write
-      contents: read
-      
-    outputs:
-      log_group_exists: ${{ steps.check-log-group.outputs.log_group_exists }}
-
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-
-    - name: Configure AWS Credentials using OIDC
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-        aws-region: us-east-1
-        role-to-assume: arn:aws:iam::236730285067:role/role_GitHubActionsIntegration
 
     - name: Check if CloudWatch Log Group exists
       id: check-log-group
@@ -149,7 +125,29 @@ jobs:
         echo "Creating CloudWatch Log Group: $LOG_GROUP_NAME"
         aws logs create-log-group --log-group-name "$LOG_GROUP_NAME"
         aws logs put-retention-policy --log-group-name "$LOG_GROUP_NAME" --retention-in-days 7
-        echo "CloudWatch Log Group $LOG_GROUP_NAME created with 7 days retention."
+        echo "CloudWatch Log Group $LOG_GROUP_NAME created with 7 days retention."        
+  
+  ecs-deploy:
+    name: "Create a task definition and ECS service and deploy"
+    needs: [docker-build-push, create-aws-services]
+    runs-on: ubuntu-latest
+    defaults: # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+      run:
+        shell: bash
+        working-directory: ecs-service-backend
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Configure AWS Credentials using OIDC
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: us-east-1
+        role-to-assume: arn:aws:iam::236730285067:role/role_GitHubActionsIntegration
 
     - name: Render ECS task definition
       id: render-task-def
