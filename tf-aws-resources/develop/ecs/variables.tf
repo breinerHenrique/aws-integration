@@ -9,9 +9,9 @@ variable "subnet_ids" {
 }
 
 variable "ami_id" {
-  description = "AMI ID for ECS instances - amzn-ami-2018.03.20241010-amazon-ecs-optimized"
+  description = "AMI ID for ECS instances"
   type        = string
-  default = "ami-0419538084bce80f7"
+  default = "ami-004021b186a0c56f8"
 }
 
 variable "instance_type" {
