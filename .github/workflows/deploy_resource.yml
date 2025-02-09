@@ -118,6 +118,9 @@ jobs:
       id-token: write
       contents: read
       
+    outputs:
+      log_group_exists: ${{ steps.check-log-group.outputs.log_group_exists }}
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
