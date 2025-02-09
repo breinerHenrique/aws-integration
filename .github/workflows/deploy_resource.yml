@@ -128,10 +128,35 @@ jobs:
         aws-region: us-east-1
         role-to-assume: arn:aws:iam::236730285067:role/role_GitHubActionsIntegration
 
+    - name: Check if CloudWatch Log Group exists
+      id: check-log-group
+      run: |
+        LOG_GROUP_NAME="/ecs/nginx"
+        echo "Checking if CloudWatch Log Group $LOG_GROUP_NAME exists..."
+        if aws logs describe-log-groups --log-group-name-prefix "$LOG_GROUP_NAME" | jq -e '.logGroups | length > 0' > /dev/null; then
+          echo "log_group_exists=true" >> $GITHUB_OUTPUT
+        else
+          echo "log_group_exists=false" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Create CloudWatch Log Group (if not exists)
+      if: steps.check-log-group.outputs.log_group_exists == 'false'
+      run: |
+        LOG_GROUP_NAME="/ecs/ngix"
+        echo "Creating CloudWatch Log Group: $LOG_GROUP_NAME"
+        aws logs create-log-group --log-group-name "$LOG_GROUP_NAME"
+        aws logs put-retention-policy --log-group-name "$LOG_GROUP_NAME" --retention-in-days 7
+        echo "CloudWatch Log Group $LOG_GROUP_NAME created with 7 days retention."
+
     - name: Render ECS task definition
       id: render-task-def
       run: |
-        jq --arg IMAGE_URI "${{ needs.docker-build-push.outputs.full_image }}" '.containerDefinitions[0].image=$IMAGE_URI' task-definition.json > task-definition-updated.json
+        LOG_GROUP_NAME="/ecs/ngix"
+        jq --arg IMAGE_URI "${{ needs.docker-build-push.outputs.full_image }}" \
+        --arg LOG_GROUP "$LOG_GROUP_NAME" \
+        '.containerDefinitions[0].image=$IMAGE_URI' |
+        .containerDefinitions[0].logConfiguration.options."awslogs-group"=$LOG_GROUP' \
+        task-definition.json > task-definition-updated.json
       
     - name: Register new ECS task definition
       id: register-task-def
@@ -157,7 +182,6 @@ jobs:
           --cluster cluster-ecs-intrack \
           --service-name nginx \
           --task-definition ${{ steps.register-task-def.outputs.task-definition-arn }} \
-          --launch-type EC2 \
           --desired-count 1
   
     - name: Update ECS service (if exists)
@@ -166,4 +190,5 @@ jobs:
         aws ecs update-service \
           --cluster cluster-ecs-intrack \
           --service nginx \
-          --task-definition ${{ steps.register-task-def.outputs.task-definition-arn }}
+          --task-definition ${{ steps.register-task-def.outputs.task-definition-arn }} \
+          --desired-count 1
