@@ -12,7 +12,6 @@
           "logDriver": "aws-logs",
           "options": {
               "awslogs-group": "PLACEHOLDER",
-              "awslogs-create-group": true,
               "awslogs-region": "us-east-1",
               "awslogs-stream-prefix": "ecs"
           }
