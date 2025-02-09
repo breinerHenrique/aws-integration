@@ -145,7 +145,7 @@ jobs:
     - name: Create CloudWatch Log Group (if not exists)
       if: steps.check-log-group.outputs.log_group_exists == 'false'
       run: |
-        LOG_GROUP_NAME="/ecs/ngix"
+        LOG_GROUP_NAME="/ecs/nginx"
         echo "Creating CloudWatch Log Group: $LOG_GROUP_NAME"
         aws logs create-log-group --log-group-name "$LOG_GROUP_NAME"
         aws logs put-retention-policy --log-group-name "$LOG_GROUP_NAME" --retention-in-days 7
@@ -154,7 +154,7 @@ jobs:
     - name: Render ECS task definition
       id: render-task-def
       run: |
-        LOG_GROUP_NAME="/ecs/ngix"
+        LOG_GROUP_NAME="/ecs/nginx"
         jq --arg IMAGE_URI "${{ needs.docker-build-push.outputs.full_image }}" \
         --arg LOG_GROUP "$LOG_GROUP_NAME" \
         '.containerDefinitions[0].image=$IMAGE_URI' |
