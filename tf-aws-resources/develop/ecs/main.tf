@@ -3,6 +3,10 @@ module "ecs_cluster" {
 
   cluster_name = var.cluster_name
 
+  cluster_service_connect_defaults = {
+    namespace = var.namespace_name
+  }
+
   cluster_configuration = {
     execute_command_configuration = {
       logging = "OVERRIDE"
