@@ -127,7 +127,7 @@ resource "aws_launch_template" "ecs" {
               #!/bin/bash
               echo "ECS_CLUSTER=${var.cluster_name}" >> /etc/ecs/ecs.config
               echo "ECS_ENABLE_AWSLOGS_EXECUTIONROLE_OVERRIDE=true" >> /etc/ecs/ecs.config
-              echo "ECS_AVAILABLE_LOGGING_DRIVERS=["json-file","awslogs"]" >> /etc/ecs/ecs.config
+              echo 'ECS_AVAILABLE_LOGGING_DRIVERS=["json-file","awslogs"]' | sudo tee -a /etc/ecs/ecs.config  
               EOF
   )
 
