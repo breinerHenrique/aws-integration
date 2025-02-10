@@ -1,10 +1,11 @@
 module "ecs_cluster" {
   source = "terraform-aws-modules/ecs/aws//modules/cluster"
+  depends_on = [ aws_service_discovery_http_namespace.this ]
 
   cluster_name = var.cluster_name
 
   cluster_service_connect_defaults = {
-    namespace = var.namespace_name
+    namespace = aws_service_discovery_http_namespace.this.arn
   }
 
   cluster_configuration = {
@@ -17,6 +18,12 @@ module "ecs_cluster" {
   }
 
   tags = var.tags
+}
+
+resource "aws_service_discovery_http_namespace" "this" {
+  name        = var.namespace_name
+  description = "CloudMap namespace for ${var.cluster_name}"
+  tags        = var.tags
 }
 
 resource "aws_iam_role" "ecs_instance_role" {
