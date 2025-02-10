@@ -8,14 +8,14 @@ locals {
   vpc_cidr = "172.31.0.0/16"
   azs      = slice(data.aws_availability_zones.available.names, 0, 1)
 
-  # container_name = "ecsdemo-frontend"
-  # container_port = 80
+  container_name = "ecsdemo-frontend"
+  container_port = 80
 
   tags = {
     Name       = local.name
     Example    = local.name
     Environment = "Development"
-    Project     = "EcsFargate"
+    Project     = "EcsEc2"
     Repository = "https://github.com/terraform-aws-modules/terraform-aws-ecs"
   }
 }
