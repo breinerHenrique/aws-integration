@@ -4,9 +4,9 @@ module "ecs_cluster" {
 
   cluster_name = var.cluster_name
 
-  cluster_service_connect_defaults = {
-    namespace = aws_service_discovery_http_namespace.this.arn
-  }
+  # cluster_service_connect_defaults = {
+  #   namespace = aws_service_discovery_http_namespace.this.arn
+  # }
 
   cluster_configuration = {
     execute_command_configuration = {
@@ -20,11 +20,11 @@ module "ecs_cluster" {
   tags = var.tags
 }
 
-resource "aws_service_discovery_http_namespace" "this" {
-  name        = var.namespace_name
-  description = "CloudMap namespace for ${var.cluster_name}"
-  tags        = var.tags
-}
+# resource "aws_service_discovery_http_namespace" "this" {
+#   name        = var.namespace_name
+#   description = "CloudMap namespace for ${var.cluster_name}"
+#   tags        = var.tags
+# }
 
 resource "aws_iam_role" "ecs_instance_role" {
   name = "${var.cluster_name}_instace_role"
