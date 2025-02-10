@@ -194,4 +194,4 @@ jobs:
           --service nginx \
           --task-definition ${{ steps.register-task-def.outputs.task-definition-arn }} \
           --desired-count 1
-          --service-connect-configuration file://service-connect.json
+          --service-connect-configuration '{"enabled":true, "namespace":"intrack", "services":[{"portName":"http", "discoveryName":"frontend", "clientAliases":[{"port":80"}]}]}'
