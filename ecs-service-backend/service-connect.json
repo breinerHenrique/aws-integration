@@ -1,0 +1,11 @@
+{
+  "enabled": true,
+  "namespace": "intrack",
+  "services": [
+    {
+      "portName": "http",
+      "discoveryName": "frontend",
+      "clientAliases": [{"port": 80}]
+    }
+  ]
+}

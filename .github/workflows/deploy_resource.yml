@@ -184,17 +184,7 @@ jobs:
           --service-name nginx \
           --task-definition ${{ steps.register-task-def.outputs.task-definition-arn }} \
           --desired-count 1
-          --service-connect-configuration "{
-              \"enabled\": true,
-              \"namespace\": \"intrack\",
-              \"services\": [
-                {
-                  \"portName\": \"http\",
-                  \"discoveryName\": \"frontend\",
-                  \"clientAliases\": [{\"port\": 80}]
-                }
-              ]
-            }"
+          --service-connect-configuration file://service-connect.json
   
     - name: Update ECS service (if exists)
       if: steps.check-service.outputs.service_exists == 'true'
@@ -204,14 +194,4 @@ jobs:
           --service nginx \
           --task-definition ${{ steps.register-task-def.outputs.task-definition-arn }} \
           --desired-count 1
-          --service-connect-configuration "{
-              \"enabled\": true,
-              \"namespace\": \"intrack\",
-              \"services\": [
-                {
-                  \"portName\": \"http\",
-                  \"discoveryName\": \"frontend\",
-                  \"clientAliases\": [{\"port\": 80}]
-                }
-              ]
-            }"          
+          --service-connect-configuration file://service-connect.json
