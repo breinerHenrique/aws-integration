@@ -11,7 +11,7 @@ variable "subnet_ids" {
 variable "ami_id" {
   description = "AMI ID for ECS instances"
   type        = string
-  default = "ami-004021b186a0c56f8"
+  default = "ami-003d6ecc8c398734b"
 }
 
 variable "instance_type" {
