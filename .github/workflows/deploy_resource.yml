@@ -186,7 +186,7 @@ jobs:
           --desired-count 1
           --service-connect-configuration "{
               \"enabled\": true,
-              \"namespace\": \"intrack.local\",
+              \"namespace\": \"intrack\",
               \"services\": [
                 {
                   \"portName\": \"http\",
@@ -206,7 +206,7 @@ jobs:
           --desired-count 1
           --service-connect-configuration "{
               \"enabled\": true,
-              \"namespace\": \"intrack.local\",
+              \"namespace\": \"intrack\",
               \"services\": [
                 {
                   \"portName\": \"http\",
