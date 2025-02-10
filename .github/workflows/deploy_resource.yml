@@ -182,8 +182,11 @@ jobs:
         aws ecs create-service \
           --cluster cluster-ecs-intrack \
           --service-name nginx \
+          --launch-type FARGATE \
           --task-definition ${{ steps.register-task-def.outputs.task-definition-arn }} \
-          --desired-count 1
+          --desired-count 1 \
+          --network-configuration file://network-configuration.json \
+          --service-connect-configuration file://service-connect.json
   
     - name: Update ECS service (if exists)
       if: steps.check-service.outputs.service_exists == 'true'
@@ -191,5 +194,8 @@ jobs:
         aws ecs update-service \
           --cluster cluster-ecs-intrack \
           --service nginx \
+          --launch-type FARGATE \
           --task-definition ${{ steps.register-task-def.outputs.task-definition-arn }} \
-          --desired-count 1
+          --desired-count 1 \
+          --network-configuration file://network-configuration.json \
+          --service-connect-configuration file://service-connect.json
