@@ -9,7 +9,7 @@
         "image": "PLACEHOLDER",
         "essential": true,
         "logConfiguration": {
-          "logDriver": "aws-logs",
+          "logDriver": "awslogs",
           "options": {
               "awslogs-group": "PLACEHOLDER",
               "awslogs-region": "us-east-1",
