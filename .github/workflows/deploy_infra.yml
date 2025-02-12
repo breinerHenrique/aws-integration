@@ -17,7 +17,7 @@ jobs:
         # INSERIR O NOME DAS PASTA COM OS ARQUIVOS DO TERRAFORM DE CADA RECURSO AWS [\"ecr\", \"s3\"]
         # SE ATENTAR A ESTRUTURA DA SINTAXE, A QUAL DEVE SER MANTIDA
         # CASO ALGUM DOS RECURSOS TF LOCALIZADOS NO DIRETORIO NAO NECESSITAR SER CRIADO, BASTA REMOVE-LO DA CONFIGURACAO ABAIXO
-        run: echo "::set-output name=paths::[\"ecr\", \"ecs\"]" 
+        run: echo "::set-output name=paths::[\"ecr\", \"ecs\", \"iam-role\", \"log-group\", \"security-group\"]" 
 
   terraform-plan:
     needs: setup-terraform-paths
